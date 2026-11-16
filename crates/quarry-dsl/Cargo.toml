@@ -5,6 +5,12 @@ edition.workspace = true
 license.workspace = true
 description = "Parser and AST for the Quarry detection DSL (Rust port of quarry/dsl)"
 
+[features]
+# Kani harnesses compile only when verifying this crate directly
+# (`cargo kani -p quarry-dsl --features kani-proofs`), not as a
+# dependency of other crates' proof runs.
+kani-proofs = []
+
 [lints.rust]
 unexpected_cfgs = { level = "allow", check-cfg = ['cfg(kani)'] }
 

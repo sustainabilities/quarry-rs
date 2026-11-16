@@ -10,7 +10,7 @@ mod ast;
 mod lexer;
 mod parser;
 
-#[cfg(kani)]
+#[cfg(all(kani, feature = "kani-proofs"))]
 mod proofs;
 
 pub use ast::*;

@@ -191,3 +191,16 @@ the SafeHarbors enforcement customization (IGN law, disposition routing,
 estate rule pack, Harbor Watch gating, sink seams), published for review
 and use by arrangement. The Apache core is cleanly separable from the
 proprietary estate layer by construction.
+
+## 8. Verification receipts (rung 5, first pass — 2026-11-16)
+
+| Tier | Tool | Result |
+|---|---|---|
+| Nonce law | Kani 0.68, 5 harnesses | **VERIFIED** — single-use (811 checks), expiry boundary exact, scope totality, determinism, totality |
+| DFA core | Verus (~/tools/verus), 5 contracts | **VERIFIED** — step in-bounds given `wf` table, run terminates, consume transition honors single-use/expiry |
+| Flow semantics | Lean 4.36, 7 theorems | **VERIFIED** — right_after ⊆ after, within ⊆ after, before/after symmetry, until-vacuity, until-requires-release, zero-window-never-fires, adjacency-satisfies-window |
+| Protocol | Tamarin, OverrideNonce.spthy | **MODEL WRITTEN** — linear-fact single-use; run pending (nix fetch in flight) |
+| Mechanical linkage | charon → aeneas | **PENDING** — `linkage: transcribed`; charon build is its own Foundry job (opam/OCaml). Until extraction lands, the Lean specs are normative, not mechanically linked |
+
+The law this table encodes: tests find today's bugs; proofs hold tomorrow's
+code hostage. The trust core can no longer silently regress.

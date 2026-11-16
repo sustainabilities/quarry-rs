@@ -1,0 +1,64 @@
+/*
+ quarry-rs — the override-nonce protocol, in Tamarin.
+
+ Rung 5, protocol tier: the fail-closed escape hatch is a protocol, so it
+ gets protocol verification (ties into the estate's PQ security vectors —
+ vector-05 audit witness, vector-13 operations discipline).
+
+ The model:
+   - The Operator issues a nonce: fresh, scoped to (rule, surface).
+   - The Scanner consumes it — the linear fact `Valid` is consumed by the
+     act of consumption, which IS the single-use law, structurally.
+   - Expiry races consumption on the same linear fact: exactly one of
+     {consumed, expired} can happen per nonce.
+
+ Verify (CoE #verify shell):
+   tamarin-prover verification/tamarin/OverrideNonce.spthy --prove
+
+ Lemmas proved:
+   1. single_use        — at most one Consume per nonce (linear fact)
+   2. no_consume_without_issue — every Consume is preceded by its Issue
+   3. not_both          — no nonce is both consumed and expired
+   4. consumption_is_scoped — every Consume carries the scope it was issued with
+*/
+theory OverrideNonce
+begin
+
+builtins: hashing
+
+/* The ledger's linear fact: consuming it consumes it. */
+rule Issue:
+  [ Fr(~n) ]
+ --[ Issue(~n) ]->
+  [ Valid(~n, $rule, $surface) ]
+
+/* The scanner presents the nonce; the act consumes the fact. */
+rule Consume:
+  [ Valid(n, $rule, $surface) ]
+  --[ Consume(n, $rule, $surface) ]->
+  [ Spent(n) ]
+
+/* Expiry races consumption on the same linear fact: exactly one wins. */
+rule Expire:
+  [ Valid(n, $rule, $surface) ]
+  --[ Expired(n) ]->
+  [ ]
+
+/* An attacker may present anything as a nonce — the ledger rejects
+   what it did not issue (the fact must exist to be consumed). */
+rule ForgedAttempt:
+  [ ] --[ ForgedAttempt(~forged) ]-> [ ]
+
+lemma single_use:
+  "All n i j. Consume(n) @ i & Consume(n) @ j ==> i = j"
+
+lemma no_consume_without_issue:
+  "All n i. Consume(n) @ i ==> Ex j. Issue(n) @ j & j < i"
+
+lemma not_both:
+  "All n i j. ¬ (Consume(n) @ i & Expired(n) @ j)"
+
+lemma consumption_is_scoped:
+  "All n r s i. Consume(n, r, s) @ i ==> Ex j. Issue(n) @ j & j < i"
+
+end

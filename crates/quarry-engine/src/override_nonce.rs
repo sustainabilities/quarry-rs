@@ -22,19 +22,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct NonceRecord {
-    pub nonce: String,
-    /// `None` = covers every rule.
-    pub rule: Option<String>,
-    /// `None` = covers every surface (host-assigned surface id).
-    pub surface: Option<String>,
-    pub issued: u64,
-    pub expires: u64,
-    pub purpose: String,
-    /// Consumption receipt: unix secs when spent. Single-use.
-    pub consumed: Option<u64>,
-}
+pub use crate::nonce_ledger::{NonceError, NonceLedger, NonceRecord};
 
 #[derive(Debug, thiserror::Error)]
 pub enum OverrideError {
@@ -114,20 +102,18 @@ impl OverrideRegistry {
         ttl_secs: u64,
         purpose: impl Into<String>,
     ) -> Result<NonceRecord, OverrideError> {
-        let t = now();
-        let record = NonceRecord {
-            nonce: fresh_nonce()?,
-            rule,
-            surface,
-            issued: t,
-            expires: t + ttl_secs,
-            purpose: purpose.into(),
-            consumed: None,
+        let mut ledger = NonceLedger {
+            records: self.read_all()?,
         };
-        let mut all = self.read_all()?;
-        all.push(record.clone());
-        self.write_all(&all)?;
-        Ok(record)
+        let rec = ledger.issue(rule, surface, now(), ttl_secs, || match fresh_nonce() {
+            Ok(n) => n,
+            Err(e) => {
+                // The CSPRNG failed; the estate law is fail-closed.
+                panic!("nonce source unavailable: {e}")
+            }
+        }, purpose);
+        self.write_all(&ledger.records)?;
+        Ok(rec)
     }
 
     /// Check a nonce against (rule, surface) and consume it — single use.
@@ -138,32 +124,23 @@ impl OverrideRegistry {
         rule: &str,
         surface: &str,
     ) -> Result<NonceRecord, OverrideError> {
-        let mut all = self.read_all()?;
-        let t = now();
-        let idx = all
-            .iter()
-            .position(|r| r.nonce == nonce)
-            .ok_or(OverrideError::NotFound)?;
-        let record = &all[idx];
-        if let Some(c) = record.consumed {
-            return Err(OverrideError::AlreadyConsumed(c));
-        }
-        if t >= record.expires {
-            return Err(OverrideError::Expired(record.expires));
-        }
-        if let Some(scope) = &record.rule {
-            if scope != rule {
-                return Err(OverrideError::OutOfScope(rule.into(), surface.into()));
-            }
-        }
-        if let Some(scope) = &record.surface {
-            if scope != surface {
-                return Err(OverrideError::OutOfScope(rule.into(), surface.into()));
-            }
-        }
-        all[idx].consumed = Some(t);
-        self.write_all(&all)?;
-        Ok(all[idx].clone())
+        let mut ledger = NonceLedger {
+            records: self.read_all()?,
+        };
+        let rec = ledger
+            .check_and_consume(nonce, rule, surface, now())
+            .map_err(|e| match e {
+                crate::nonce_ledger::NonceError::NotFound => OverrideError::NotFound,
+                crate::nonce_ledger::NonceError::AlreadyConsumed(t) => {
+                    OverrideError::AlreadyConsumed(t)
+                }
+                crate::nonce_ledger::NonceError::Expired(t) => OverrideError::Expired(t),
+                crate::nonce_ledger::NonceError::OutOfScope(r, s) => {
+                    OverrideError::OutOfScope(r, s)
+                }
+            })?;
+        self.write_all(&ledger.records)?;
+        Ok(rec)
     }
 }
 
