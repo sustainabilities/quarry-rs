@@ -138,6 +138,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "quarry-ffi"
+version = "0.1.0"
+dependencies = [
+ "quarry-core",
+ "quarry-dsl",
+ "quarry-engine",
+ "serde_json",
+ "sha2",
+]
+
+[[package]]
 name = "quote"
 version = "1.0.47"
 source = "registry+https://github.com/rust-lang/crates.io-index"

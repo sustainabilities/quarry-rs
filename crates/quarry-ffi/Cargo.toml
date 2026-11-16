@@ -1,0 +1,19 @@
+[package]
+name = "quarry-ffi"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "C-ABI surface for quarry-rs — FFFII-disciplined: passports, panic containment, hash-chained crossing receipts"
+
+[lib]
+# cdylib: consumable by any host (Python ctypes, Swift, C).
+# staticlib: static linking into hosts that embed.
+# rlib: the Rust tests drive the same exports.
+crate-type = ["cdylib", "staticlib", "rlib"]
+
+[dependencies]
+quarry-core = { workspace = true }
+quarry-dsl = { workspace = true }
+quarry-engine = { workspace = true }
+sha2 = "0.10"
+serde_json = { workspace = true }

@@ -6,6 +6,7 @@ members = [
     "crates/quarry-adapters",
     "crates/quarry-engine",
     "crates/quarry-cli",
+    "crates/quarry-ffi",
 ]
 
 [workspace.package]
