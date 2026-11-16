@@ -1,0 +1,11 @@
+[package]
+name = "quarry-adapters"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Model adapter trait surface for Quarry rules (Rust port of the model-inference layer)"
+
+[dependencies]
+quarry-core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }

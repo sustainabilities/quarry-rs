@@ -1,0 +1,16 @@
+[package]
+name = "quarry-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Quarry scanner CLI (Rust port of quarry/cli.py — parse stage live)"
+
+[[bin]]
+name = "quarry-rs"
+path = "src/main.rs"
+
+[dependencies]
+quarry-core = { workspace = true }
+quarry-dsl = { workspace = true }
+quarry-engine = { workspace = true }
+serde_json = { workspace = true }

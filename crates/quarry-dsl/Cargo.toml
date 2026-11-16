@@ -1,0 +1,11 @@
+[package]
+name = "quarry-dsl"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Parser and AST for the Quarry detection DSL (Rust port of quarry/dsl)"
+
+[lints.rust]
+unexpected_cfgs = { level = "allow", check-cfg = ['cfg(kani)'] }
+
+[dependencies]

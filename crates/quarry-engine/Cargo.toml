@@ -1,0 +1,16 @@
+[package]
+name = "quarry-engine"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Rule compiler (symbolic DFA) and executor for the Quarry DSL (Rust port of quarry/engine)"
+
+[dependencies]
+quarry-core = { workspace = true }
+quarry-dsl = { workspace = true }
+quarry-adapters = { workspace = true }
+regex = "1"
+sha2 = "0.10"
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }

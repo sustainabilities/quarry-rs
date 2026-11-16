@@ -1,0 +1,29 @@
+NOTICE
+======
+
+This project is a Rust port of Project Quarry.
+
+  Project Quarry
+  Copyright 2026 Cisco Systems, Inc. and its affiliates
+  https://github.com/cisco-ai-defense/project-quarry
+  Licensed under the Apache License, Version 2.0
+
+Portions of this repository derive from the upstream project:
+
+- The detection DSL grammar and its semantics
+  (crates/quarry-dsl — ported from upstream `quarry/dsl/grammar.py`,
+  compiler-7).
+- The engine's load-time compilation contract, flow-operator semantics,
+  string-matching semantics, and limits model
+  (crates/quarry-engine — ported from upstream `quarry/engine/`).
+- The conformance corpus and machine-readable language spec
+  (conformance/ — copied from upstream `examples/` and
+  `quarry/language/spec.json`, Apache-2.0).
+
+Those portions remain subject to the Apache License, Version 2.0; a copy of
+which may be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+The original Python implementation, its design, and its documentation are
+Cisco's work; this port is an independent implementation of the same
+language and semantics in Rust, and is not affiliated with or endorsed by
+Cisco.
