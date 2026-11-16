@@ -179,6 +179,15 @@ Tymelyne / estate-memory (sessions.redb)          Harbor Watch (CoE #2)
 
 ## 7. Licensing
 
-Upstream Apache 2.0 (Cisco). The port keeps Apache 2.0 and attribution in
-every crate header. Estate-proprietary adapters (HELM) stay in a separate
-crate so the Apache core can be published cleanly.
+**Public core (`sustainabilities/quarry-rs`)**: MIT, with `NOTICE` carrying
+the Apache-2.0 attribution to Cisco's Project Quarry (the DSL grammar,
+engine semantics, and the conformance corpus derive from upstream). The
+copied harbor-watch sha512 was **removed** from the public tree — the core
+uses the standard `sha2` crate; the estate's verified implementation stays
+in estate code only.
+
+**Estate layer (`sustainabilities/agent-safety`)**: LicenseRef-Proprietary —
+the SafeHarbors enforcement customization (IGN law, disposition routing,
+estate rule pack, Harbor Watch gating, sink seams), published for review
+and use by arrangement. The Apache core is cleanly separable from the
+proprietary estate layer by construction.
