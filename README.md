@@ -84,6 +84,13 @@ optimize.** Proven bounds delete runtime defensive checks; proven
 determinism enables single-pass rule fusion; receipted precompiled
 generations move work off the hot path.
 
+## Documentation
+
+- [docs/dsl.md](docs/dsl.md) — the detection DSL: rules, strings, flow operators, captures, the fail-closed law (**start here**)
+- [docs/architecture.md](docs/architecture.md) — how the engine works
+- [PORT-SPEC.md](PORT-SPEC.md) — the full port specification and verification ladder
+- [docs/upstream-apache2/](docs/upstream-apache2/) — Cisco's original docs, kept verbatim as reference
+
 ## Provenance & license
 
 Ported from Cisco's open-source Project Quarry (Apache-2.0, `compiler-7` @
