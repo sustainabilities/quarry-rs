@@ -8,7 +8,6 @@ description = "Rule compiler (symbolic DFA) and executor for the Quarry DSL (Rus
 [dependencies]
 quarry-core = { workspace = true }
 quarry-dsl = { workspace = true }
-quarry-adapters = { workspace = true }
 regex = "1"
 sha2 = "0.10"
 serde = { workspace = true }

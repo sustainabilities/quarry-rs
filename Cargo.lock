@@ -127,7 +127,6 @@ version = "0.1.0"
 name = "quarry-engine"
 version = "0.1.0"
 dependencies = [
- "quarry-adapters",
  "quarry-core",
  "quarry-dsl",
  "regex",
