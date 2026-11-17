@@ -208,7 +208,7 @@ fn record(ffii_id: &'static str, code: FfiCode) {
 pub fn verify_receipts() -> bool {
     LEDGER.with(|l| {
         let ledger = l.borrow();
-        let mut prev = [0u8; 32];
+        let mut prev = [0u8; 64];
         for r in ledger.iter() {
             let mut h = Sha512::new();
             h.update(prev);
@@ -262,6 +262,9 @@ pub unsafe extern "C" fn quarry_scan(
         );
         match verdict.status {
             quarry_core::ScanStatus::Complete => FfiCode::Ok,
+            // The four-way distinction survives the crossing:
+            // invalid input ≠ no-verdict — the host must see the difference.
+            quarry_core::ScanStatus::Invalid(_) => FfiCode::InvalidInput,
             _ => FfiCode::NoVerdict,
         }
     }))

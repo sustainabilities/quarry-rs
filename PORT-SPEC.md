@@ -204,3 +204,24 @@ proprietary estate layer by construction.
 
 The law this table encodes: tests find today's bugs; proofs hold tomorrow's
 code hostage. The trust core can no longer silently regress.
+
+## 9. Verification receipts — updated (2026-11-16, later pass)
+
+| Tier | Tool | Result |
+|---|---|---|
+| Nonce law | Kani 0.68, 5 harnesses | **VERIFIED** (811 checks) |
+| DFA core | Verus, 5 contracts | **VERIFIED** (step/run/consume) |
+| Flow semantics | Lean 4.36, 7 theorems | **VERIFIED** (kernel-checked) |
+| FFI boundary | Miri (nightly), 5 boundary tests | **GREEN** — no UB, no leaks, no aliasing violations in the audited unsafe module |
+| Engine lib | Miri, 16 tests | **GREEN** (spawn test excluded: Miri/macOS foreign-fn limit, not a UB finding) |
+| Mechanical linkage | charon `--preset=aeneas` | **EXTRACTED** — all 5 crates' LLBC on workstation-primary (engine: 448MB); aeneas Lean translation pending |
+| Protocol | Tamarin, OverrideNonce.spthy | model written; prover run pending |
+
+The extraction lesson, banked: `--preset=aeneas` is the supported entry
+point (8 seconds, not 90 minutes); mechanical verification is a batch job
+with receipts, not a dev loop.
+
+The Miri lane covers what Aeneas cannot: the unsafe fragments (the FFI
+audited module). Complementary layers, per the SymCrypt precedent
+(arXiv 2609.15648): Miri for UB evidence on the boundary, Aeneas+Lean for
+the functional core, Kani for bounded properties.
