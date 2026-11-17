@@ -52,7 +52,7 @@ pub const SIG_VERIFY_TRACE: &str = "quarry_verify_trace(chain:path utf8) -> code
 pub const SIG_OVERRIDE_ISSUE: &str =
     "quarry_override_issue(rule:utf8, ttl:u64, purpose:utf8) -> nonce:utf8";
 
-fn ffii_id(sig: &'static str) -> &'static str {
+pub fn ffii_id(sig: &'static str) -> &'static str {
     static IDS: [OnceLock<String>; 3] = [OnceLock::new(), OnceLock::new(), OnceLock::new()];
     let slot = match sig {
         SIG_SCAN => 0,
@@ -365,3 +365,4 @@ pub unsafe extern "C" fn quarry_free(ptr: *mut c_char) {
 
 /// Public re-exports at the crate root — the safe facade.
 pub use ffi_surface::{quarry_free, quarry_handshake, quarry_override_issue, quarry_scan, quarry_verify_trace};
+pub use ffi_surface::{ffii_id, SIG_OVERRIDE_ISSUE, SIG_SCAN, SIG_VERIFY_TRACE};
